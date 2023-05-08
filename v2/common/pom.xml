@@ -18,8 +18,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-      <groupId>com.google.cloud.teleport.v2</groupId>
-      <artifactId>dynamic-templates</artifactId>
+        <groupId>com.google.cloud.teleport.v2</groupId>
+        <artifactId>dynamic-templates</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -27,7 +27,6 @@
     <artifactId>common</artifactId>
 
     <properties>
-        <avro.version>1.8.2</avro.version>
         <bigquery.version>2.9.0</bigquery.version>
         <commons.version>1.8</commons.version>
         <commons-text.version>1.10.0</commons-text.version>
@@ -121,6 +120,10 @@
                 <artifactId>google-api-services-bigquery</artifactId>
               </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>com.google.cloud</groupId>
+          <artifactId>google-cloud-storage</artifactId>
         </dependency>
         <dependency>
           <groupId>com.google.cloud</groupId>

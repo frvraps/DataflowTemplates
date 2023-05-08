@@ -91,7 +91,8 @@ public class TemplatesStageMojo extends TemplatesBaseMojo {
 
   @Parameter(
       name = "baseContainerImage",
-      defaultValue = "gcr.io/dataflow-templates-base/java11-template-launcher-base:latest",
+      defaultValue =
+          "gcr.io/dataflow-templates-base/java11-template-launcher-base-distroless:latest",
       required = false)
   protected String baseContainerImage;
 
@@ -144,7 +145,7 @@ public class TemplatesStageMojo extends TemplatesBaseMojo {
       BuildPluginManager pluginManager =
           (BuildPluginManager) session.lookup("org.apache.maven.plugin.BuildPluginManager");
 
-      LOG.info("Staging Templates to bucket {}...", bucketNameOnly(bucketName));
+      LOG.info("Staging Templates to bucket '{}'...", bucketNameOnly(bucketName));
 
       List<TemplateDefinitions> templateDefinitions =
           TemplateDefinitionsParser.scanDefinitions(loader);

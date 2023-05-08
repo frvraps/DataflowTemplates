@@ -25,6 +25,7 @@ import com.google.cloud.syndeo.common.ProviderUtil.TransformSpec;
 import com.google.cloud.syndeo.transforms.SyndeoStatsSchemaTransformProvider;
 import com.google.cloud.syndeo.v1.SyndeoV1.ConfiguredSchemaTransform;
 import com.google.cloud.syndeo.v1.SyndeoV1.PipelineDescription;
+import com.google.common.io.CharStreams;
 import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.io.Reader;
@@ -45,12 +46,12 @@ import org.apache.beam.sdk.io.FileSystems;
 import org.apache.beam.sdk.io.fs.MatchResult;
 import org.apache.beam.sdk.io.fs.MatchResult.Status;
 import org.apache.beam.sdk.io.fs.ResourceId;
+import org.apache.beam.sdk.io.gcp.bigquery.BigQueryOptions;
 import org.apache.beam.sdk.options.Description;
 import org.apache.beam.sdk.options.PipelineOptions;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.schemas.transforms.SchemaTransformProvider;
 import org.apache.beam.sdk.values.PCollectionRowTuple;
-import org.apache.beam.vendor.grpc.v1p48p1.com.google.common.io.CharStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,6 +106,10 @@ public class SyndeoTemplate {
         Map.of(
             "syndeo:schematransform:com.google.cloud:pubsub_read:v1",
             Set.of(),
+            "syndeo:schematransform:com.google.cloud:pubsub_write:v1",
+            Set.of(),
+            "syndeo:schematransform:com.google.cloud:pubsub_dlq_write:v1",
+            Set.of(),
             "syndeo:schematransform:com.google.cloud:bigtable_write:v1",
             Set.of("instanceId", "tableId", "keyColumns", "projectId", "appProfileId")));
     SUPPORTED_URNS.putAll(SUPPORTED_SCALAR_TRANSFORM_URNS);
@@ -156,7 +161,10 @@ public class SyndeoTemplate {
     SchemaTransformProvider transformProvider =
         ProviderUtil.getProvider(transformConfig.get("urn").asText());
     LOG.info(
-        "Transform provider({}) is: {}", transformConfig.get("urn").asText(), transformProvider);
+        "Transform provider({}) is: {} | in {}",
+        transformConfig.get("urn").asText(),
+        transformProvider,
+        transformProvider.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
     if (transformProvider == null) {
       throw new IllegalArgumentException(
           String.format(
@@ -216,6 +224,12 @@ public class SyndeoTemplate {
     }
     // Add the sink transform
     transforms.add(buildFromJsonConfig(config.get("sink")));
+
+    // Adding the dlq transform, if present
+    if (config.get("dlq") != null) {
+      transforms.add(buildFromJsonConfig(config.get("dlq")));
+    }
+
     return PipelineDescription.newBuilder().addAllTransforms(transforms).build();
   }
 
@@ -246,5 +260,16 @@ public class SyndeoTemplate {
           "Template received neither of --pipelineSpec or --jsonSpecPayload parameters. "
               + "One of these parameters must be specified.");
     }
+    List<String> experiments =
+        inputOptions.getExperiments() == null
+            ? List.of()
+            : new ArrayList<>(inputOptions.getExperiments());
+    experiments.addAll(
+        List.of(
+            "enable_streaming_engine",
+            "enable_streaming_auto_sharding=true",
+            "streaming_auto_sharding_algorithm=FIXED_THROUGHPUT"));
+    inputOptions.as(BigQueryOptions.class).setNumStorageWriteApiStreams(50);
+    inputOptions.setExperiments(experiments);
   }
 }

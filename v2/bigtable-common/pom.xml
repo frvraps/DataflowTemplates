@@ -32,6 +32,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.google.cloud.teleport.v2</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.google.cloud.bigtable</groupId>
             <artifactId>bigtable-hbase-beam</artifactId>
             <version>${bigtable.version}</version>
@@ -51,6 +56,12 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.truth</groupId>
+            <artifactId>truth</artifactId>
+            <version>${truth.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

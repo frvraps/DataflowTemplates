@@ -26,10 +26,6 @@
   <artifactId>googlecloud-to-neo4j</artifactId>
   <modelVersion>4.0.0</modelVersion>
 
-  <properties>
-    <hadoop.version>3.3.3</hadoop.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>com.google.cloud.teleport.v2</groupId>
@@ -43,7 +39,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.24</version>
+      <version>1.18.26</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

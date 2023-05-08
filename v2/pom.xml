@@ -140,18 +140,6 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.google.cloud.teleport</groupId>
-            <artifactId>integration-testing-lib</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-            <exclusions>
-               <exclusion>
-                 <groupId>org.slf4j</groupId>
-                 <artifactId>slf4j-simple</artifactId>
-               </exclusion>
-            </exclusions>
-        </dependency>
 
         <!-- Misc -->
         <dependency>
@@ -192,11 +180,6 @@
             <artifactId>plaintext-logging</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>${json.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

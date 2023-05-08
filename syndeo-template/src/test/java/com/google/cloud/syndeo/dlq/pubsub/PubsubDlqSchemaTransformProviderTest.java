@@ -80,7 +80,7 @@ public class PubsubDlqSchemaTransformProviderTest {
   }
 
   @Test
-  public void testPubsubDlqWriteSuccess() {
+  public void testPubsubDlqWriteSuccess() throws IOException {
     TopicPath topicPath = PubsubClient.topicPathFromPath(TOPIC);
     List<OutgoingMessage> outgoing =
         ImmutableList.of(
@@ -89,6 +89,7 @@ public class PubsubDlqSchemaTransformProviderTest {
                     .setData(ByteString.copyFromUtf8(generateRow().toString(true)))
                     .build(),
                 -9223372036854775L,
+                null,
                 null));
     PubsubTestClientFactory pubsubFactory =
         PubsubTestClient.createFactoryForPublish(topicPath, outgoing, ImmutableList.of());
@@ -102,6 +103,7 @@ public class PubsubDlqSchemaTransformProviderTest {
                 .buildTransform());
 
     pipeline.run(OPTIONS);
+    pubsubFactory.close();
   }
 
   @Test
